@@ -27,8 +27,12 @@ def filter_handoff_rows(
     if severities is None:
         return row_list
 
-    allowed_severities = set(severities)
-    return [row for row in row_list if row["severity"] in allowed_severities]
+    allowed_severities = {severity.strip().lower() for severity in severities}
+    return [
+        row
+        for row in row_list
+        if row["severity"].strip().lower() in allowed_severities
+    ]
 
 
 def extract_release_marker(note: str) -> str:
