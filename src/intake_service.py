@@ -36,5 +36,8 @@ def filter_handoff_rows(
 
 
 def extract_release_marker(note: str) -> str:
-    """Normalize surrounding whitespace for a release marker."""
-    return note.strip()
+    """Return the final non-empty release marker line from copied intake notes."""
+    lines = [line.strip() for line in note.splitlines() if line.strip()]
+    if not lines:
+        return ""
+    return lines[-1]

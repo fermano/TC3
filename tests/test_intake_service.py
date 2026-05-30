@@ -38,3 +38,9 @@ def test_handoff_rows_filter_requested_severities() -> None:
 
 def test_release_marker_trims_surrounding_whitespace() -> None:
     assert extract_release_marker("  20260530-rc2  ") == "20260530-rc2"
+
+
+def test_release_marker_uses_last_non_empty_line_from_notes() -> None:
+    note = "\nSupport pasted context here\n\n  2026.05.30-internal-202605301145  \n"
+
+    assert extract_release_marker(note) == "2026.05.30-internal-202605301145"
