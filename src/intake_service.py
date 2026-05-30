@@ -17,9 +17,22 @@ def resolve_retry_budget(requested: int | None, default: int) -> int:
     return default if requested is None else requested
 
 
-def filter_handoff_rows(rows: Iterable[HandoffRow]) -> list[HandoffRow]:
-    """Return handoff rows in the order copied from support notes."""
-    return list(rows)
+def filter_handoff_rows(
+    rows: Iterable[HandoffRow],
+    *,
+    severities: Iterable[str] | None = None,
+) -> list[HandoffRow]:
+    """Return copied handoff rows, optionally limited to requested severities."""
+    row_list = list(rows)
+    if severities is None:
+        return row_list
+
+    allowed_severities = {severity.strip().lower() for severity in severities}
+    return [
+        row
+        for row in row_list
+        if row["severity"].strip().lower() in allowed_severities
+    ]
 
 
 def extract_release_marker(note: str) -> str:

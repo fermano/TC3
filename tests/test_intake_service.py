@@ -26,5 +26,15 @@ def test_handoff_rows_keep_input_order() -> None:
     assert filter_handoff_rows(rows) == rows
 
 
+def test_handoff_rows_filter_requested_severities() -> None:
+    rows = [
+        {"owner": "support", "severity": "low", "summary": "Copy cleanup"},
+        {"owner": "platform", "severity": "HIGH", "summary": "Queue delay"},
+        {"owner": "release", "severity": "Critical", "summary": "Marker drift"},
+    ]
+
+    assert filter_handoff_rows(rows, severities={"high", "critical"}) == rows[1:]
+
+
 def test_release_marker_trims_surrounding_whitespace() -> None:
     assert extract_release_marker("  20260530-rc2  ") == "20260530-rc2"
