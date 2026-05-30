@@ -29,8 +29,8 @@ def test_handoff_rows_keep_input_order() -> None:
 def test_handoff_rows_filter_requested_severities() -> None:
     rows = [
         {"owner": "support", "severity": "low", "summary": "Copy cleanup"},
-        {"owner": "platform", "severity": "high", "summary": "Queue delay"},
-        {"owner": "release", "severity": "critical", "summary": "Marker drift"},
+        {"owner": "platform", "severity": "HIGH", "summary": "Queue delay"},
+        {"owner": "release", "severity": "Critical", "summary": "Marker drift"},
     ]
 
     assert filter_handoff_rows(rows, severities={"high", "critical"}) == rows[1:]
