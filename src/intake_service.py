@@ -35,13 +35,18 @@ def filter_handoff_rows(
         if severities is None
         else {severity.strip().lower() for severity in severities}
     )
-    allowed_owners = None if owners is None else set(owners)
+    allowed_owners = (
+        None if owners is None else {owner.strip().lower() for owner in owners}
+    )
     return [
         row
         for row in row_list
         if (
             (allowed_severities is None or row["severity"].strip().lower() in allowed_severities)
-            and (allowed_owners is None or row["owner"] in allowed_owners)
+            and (
+                allowed_owners is None
+                or row["owner"].strip().lower() in allowed_owners
+            )
         )
     ]
 
