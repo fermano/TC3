@@ -44,10 +44,11 @@ def highest_severity(signals: Iterable[OperationSignal]) -> str:
     rank = 0
     severity = "low"
     for signal in signals:
-        signal_rank = SEVERITY_RANK.get(signal.severity, 0)
+        normalized_severity = signal.severity.strip().lower()
+        signal_rank = SEVERITY_RANK.get(normalized_severity, 0)
         if signal_rank > rank:
             rank = signal_rank
-            severity = signal.severity
+            severity = normalized_severity
     return severity
 
 
@@ -72,8 +73,21 @@ def summarize_signals_for_handoff(
     signals: Iterable[OperationSignal],
     *,
     fallback_owner: str | None = None,
+    min_severity: str | None = None,
 ) -> HandoffSummary:
     signal_list = list(signals)
+    if min_severity is not None:
+        normalized_min_severity = min_severity.strip().lower()
+        if normalized_min_severity not in SEVERITY_RANK:
+            raise ValueError("minimum severity must be low, medium, high, or critical")
+
+        minimum_rank = SEVERITY_RANK[normalized_min_severity]
+        signal_list = [
+            signal
+            for signal in signal_list
+            if SEVERITY_RANK.get(signal.severity.strip().lower(), 0) >= minimum_rank
+        ]
+
     grouped = group_signals_by_owner(signal_list, fallback_owner=fallback_owner)
 
     return HandoffSummary(
