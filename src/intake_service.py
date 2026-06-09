@@ -23,17 +23,31 @@ def filter_handoff_rows(
     rows: Iterable[HandoffRow],
     *,
     severities: Iterable[str] | None = None,
+    owners: Iterable[str] | None = None,
 ) -> list[HandoffRow]:
-    """Return copied handoff rows, optionally limited to requested severities."""
+    """Return copied handoff rows limited to requested severities and owners."""
     row_list = list(rows)
-    if severities is None:
+    if severities is None and owners is None:
         return row_list
 
-    allowed_severities = {severity.strip().lower() for severity in severities}
+    allowed_severities = (
+        None
+        if severities is None
+        else {severity.strip().lower() for severity in severities}
+    )
+    allowed_owners = (
+        None if owners is None else {owner.strip().lower() for owner in owners}
+    )
     return [
         row
         for row in row_list
-        if row["severity"].strip().lower() in allowed_severities
+        if (
+            (allowed_severities is None or row["severity"].strip().lower() in allowed_severities)
+            and (
+                allowed_owners is None
+                or row["owner"].strip().lower() in allowed_owners
+            )
+        )
     ]
 
 
