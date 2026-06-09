@@ -47,6 +47,26 @@ def test_summarize_signals_for_handoff_rolls_owner_severity_and_count():
     assert summary.signal_count == 2
 
 
+def test_summarize_signals_for_handoff_filters_by_minimum_severity():
+    signals = [
+        OperationSignal("copy", "low", "support", datetime.now(timezone.utc)),
+        OperationSignal("unknown", "notice", "docs", datetime.now(timezone.utc)),
+        OperationSignal("queue", "HIGH", "platform", datetime.now(timezone.utc)),
+        OperationSignal("marker", "critical", "release", datetime.now(timezone.utc)),
+    ]
+
+    summary = summarize_signals_for_handoff(signals, min_severity=" high ")
+
+    assert summary.highest_severity == "critical"
+    assert summary.owners == ("platform", "release")
+    assert summary.signal_count == 2
+
+
+def test_summarize_signals_for_handoff_rejects_unknown_minimum_severity():
+    with pytest.raises(ValueError, match="minimum severity"):
+        summarize_signals_for_handoff([], min_severity="notice")
+
+
 def test_build_release_marker_defaults_blank_channel_to_internal():
     marker = build_release_marker("2026.05.30", "   ")
 
