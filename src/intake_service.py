@@ -14,6 +14,8 @@ class HandoffRow(TypedDict):
 
 def resolve_retry_budget(requested: int | None, default: int) -> int:
     """Return the configured retry count unless a request overrides it."""
+    if requested is not None and requested < 0:
+        raise ValueError("retry budget must be non-negative")
     return default if requested is None else requested
 
 
