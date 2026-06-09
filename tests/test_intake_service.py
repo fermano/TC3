@@ -1,3 +1,5 @@
+import pytest
+
 from src.intake_service import (
     extract_release_marker,
     filter_handoff_rows,
@@ -15,6 +17,11 @@ def test_retry_budget_accepts_positive_override() -> None:
 
 def test_retry_budget_accepts_zero_override() -> None:
     assert resolve_retry_budget(0, 3) == 0
+
+
+def test_retry_budget_rejects_negative_override() -> None:
+    with pytest.raises(ValueError, match="non-negative"):
+        resolve_retry_budget(-1, 3)
 
 
 def test_handoff_rows_keep_input_order() -> None:
