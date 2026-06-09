@@ -46,10 +46,10 @@ def test_handoff_rows_filter_requested_severities() -> None:
 def test_handoff_rows_filter_requested_owners() -> None:
     rows = [
         {"owner": "support", "severity": "low", "summary": "Copy cleanup"},
-        {"owner": "platform", "severity": "high", "summary": "Queue delay"},
+        {"owner": " Platform ", "severity": "high", "summary": "Queue delay"},
     ]
 
-    assert filter_handoff_rows(rows, owners={"platform"}) == rows[1:]
+    assert filter_handoff_rows(rows, owners={"PLATFORM"}) == rows[1:]
 
 
 def test_handoff_rows_combine_owner_and_severity_filters() -> None:
