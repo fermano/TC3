@@ -1,3 +1,5 @@
+import pytest
+
 from src.release_notes import (
     OperationSignal,
     build_release_marker,
@@ -18,6 +20,22 @@ def test_generator_backed_severity_uses_highest_signal():
     )
 
     assert highest_severity(signals) == "critical"
+
+
+def test_highest_severity_normalizes_support_values():
+    signals = (
+        OperationSignal("platform", severity)
+        for severity in (" low ", "HIGH", " Critical ")
+    )
+
+    assert highest_severity(signals) == "critical"
+
+
+def test_highest_severity_rejects_unknown_values():
+    signals = (OperationSignal("docs", "notice"),)
+
+    with pytest.raises(ValueError, match="severity must be"):
+        highest_severity(signals)
 
 
 def test_blank_owner_uses_configured_fallback():
