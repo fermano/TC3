@@ -12,6 +12,9 @@ class HandoffRow(TypedDict):
     summary: str
 
 
+SEVERITY_RANK = {"low": 0, "medium": 1, "high": 2, "critical": 3}
+
+
 def resolve_retry_budget(requested: int | None, default: int) -> int:
     """Return the configured retry count unless a request overrides it."""
     if requested is not None and requested < 0:
@@ -24,10 +27,20 @@ def filter_handoff_rows(
     *,
     severities: Iterable[str] | None = None,
     owners: Iterable[str] | None = None,
+    minimum_severity: str | None = None,
 ) -> list[HandoffRow]:
     """Return copied handoff rows limited to requested severities and owners."""
     row_list = list(rows)
-    if severities is None and owners is None:
+    minimum_rank: int | None = None
+    if minimum_severity is not None:
+        normalized_minimum = minimum_severity.strip().lower()
+        if normalized_minimum not in SEVERITY_RANK:
+            raise ValueError(
+                "minimum severity must be low, medium, high, or critical"
+            )
+        minimum_rank = SEVERITY_RANK[normalized_minimum]
+
+    if severities is None and owners is None and minimum_rank is None:
         return row_list
 
     allowed_severities = (
@@ -42,7 +55,15 @@ def filter_handoff_rows(
         row
         for row in row_list
         if (
-            (allowed_severities is None or row["severity"].strip().lower() in allowed_severities)
+            (
+                allowed_severities is None
+                or row["severity"].strip().lower() in allowed_severities
+            )
+            and (
+                minimum_rank is None
+                or SEVERITY_RANK.get(row["severity"].strip().lower(), -1)
+                >= minimum_rank
+            )
             and (
                 allowed_owners is None
                 or row["owner"].strip().lower() in allowed_owners
