@@ -29,9 +29,18 @@ def build_release_marker(version: str, channel: str) -> str:
 
 
 def highest_severity(signals: Iterable[OperationSignal]) -> str:
+    normalized_severities: list[str] = []
+    for signal in signals:
+        severity = signal.severity.strip().lower()
+        if severity not in SEVERITY_RANK:
+            raise ValueError(
+                "severity must be low, medium, high, or critical"
+            )
+        normalized_severities.append(severity)
+
     return max(
-        (signal.severity for signal in signals),
-        key=lambda severity: SEVERITY_RANK[severity],
+        normalized_severities,
+        key=SEVERITY_RANK.__getitem__,
         default="low",
     )
 
