@@ -56,4 +56,9 @@ def extract_release_marker(note: str) -> str:
     lines = [line.strip() for line in note.splitlines() if line.strip()]
     if not lines:
         return ""
-    return lines[-1]
+
+    marker = lines[-1]
+    prefix, separator, value = marker.partition(":")
+    if separator and prefix.strip().lower() == "release":
+        return value.strip()
+    return marker
