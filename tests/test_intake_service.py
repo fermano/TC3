@@ -74,3 +74,13 @@ def test_release_marker_uses_last_non_empty_line_from_notes() -> None:
     note = "\nSupport pasted context here\n\n  2026.05.30-internal-202605301145  \n"
 
     assert extract_release_marker(note) == "2026.05.30-internal-202605301145"
+
+
+def test_release_marker_accepts_prefixed_support_notes() -> None:
+    note = "Context from Support\n  RELEASE:  20260530-rc2  "
+
+    assert extract_release_marker(note) == "20260530-rc2"
+
+
+def test_release_marker_with_empty_prefix_value_returns_empty_string() -> None:
+    assert extract_release_marker("Context\nrelease:   ") == ""
