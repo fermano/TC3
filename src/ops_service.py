@@ -121,3 +121,18 @@ def parse_release_marker(marker: str) -> ReleaseMarker:
         raise ValueError("release marker timestamp must use YYYYMMDDHHMM") from exc
 
     return ReleaseMarker(version=version, channel=channel, observed_at=observed_at.replace(tzinfo=timezone.utc))
+
+
+def count_signals_by_severity(
+    signals: Iterable[OperationSignal],
+) -> dict[str, int]:
+    """Return signal counts keyed by known severity, in ascending rank order."""
+    counts = {
+        severity: 0
+        for severity in sorted(SEVERITY_RANK, key=SEVERITY_RANK.__getitem__)
+    }
+    for signal in signals:
+        normalized_severity = signal.severity.strip().lower()
+        if normalized_severity in counts:
+            counts[normalized_severity] += 1
+    return counts
