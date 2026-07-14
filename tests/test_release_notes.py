@@ -45,3 +45,8 @@ def test_blank_owner_uses_configured_fallback():
         "engineering-ops",
         "platform",
     )
+
+
+def test_release_marker_channel_is_normalized_to_slug():
+    assert build_release_marker("1.2.0", " Public Beta ") == "1.2.0-public-beta"
+    assert build_release_marker("1.2.0", "HOTFIX/QA") == "1.2.0-hotfix-qa"

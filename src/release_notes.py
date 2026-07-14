@@ -1,3 +1,4 @@
+import re
 from collections.abc import Iterable
 from dataclasses import dataclass
 
@@ -8,6 +9,8 @@ SEVERITY_RANK = {
     "high": 2,
     "critical": 3,
 }
+
+CHANNEL_SLUG_RE = re.compile(r"[^a-z0-9]+")
 
 
 @dataclass(frozen=True)
@@ -24,7 +27,9 @@ class HandoffSummary:
 
 
 def build_release_marker(version: str, channel: str) -> str:
-    normalized_channel = channel.strip() or "internal"
+    normalized_channel = (
+        CHANNEL_SLUG_RE.sub("-", channel.strip().lower()).strip("-") or "internal"
+    )
     return f"{version}-{normalized_channel}"
 
 
