@@ -28,6 +28,7 @@ def filter_handoff_rows(
     severities: Iterable[str] | None = None,
     owners: Iterable[str] | None = None,
     minimum_severity: str | None = None,
+    exclude_owners: Iterable[str] | None = None,
 ) -> list[HandoffRow]:
     """Return copied handoff rows limited to requested severities and owners."""
     row_list = list(rows)
@@ -40,7 +41,12 @@ def filter_handoff_rows(
             )
         minimum_rank = SEVERITY_RANK[normalized_minimum]
 
-    if severities is None and owners is None and minimum_rank is None:
+    if (
+        severities is None
+        and owners is None
+        and minimum_rank is None
+        and exclude_owners is None
+    ):
         return row_list
 
     allowed_severities = (
@@ -50,6 +56,11 @@ def filter_handoff_rows(
     )
     allowed_owners = (
         None if owners is None else {owner.strip().lower() for owner in owners}
+    )
+    excluded_owners = (
+        None
+        if exclude_owners is None
+        else {owner.strip().lower() for owner in exclude_owners}
     )
     return [
         row
@@ -67,6 +78,10 @@ def filter_handoff_rows(
             and (
                 allowed_owners is None
                 or row["owner"].strip().lower() in allowed_owners
+            )
+            and (
+                excluded_owners is None
+                or row["owner"].strip().lower() not in excluded_owners
             )
         )
     ]
