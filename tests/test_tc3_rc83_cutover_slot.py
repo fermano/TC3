@@ -1,4 +1,4 @@
-from src.tc3_rc83_cutover_slot import build_cutover_slot
+from src.tc3_rc83_cutover_slot import ARTIFACT_SCHEMA, build_cutover_slot
 
 
 def test_cutover_slot_uses_market_shape():
@@ -11,6 +11,8 @@ def test_cutover_slot_uses_market_shape():
     assert row["market"] == "br-south"
     assert row["slot_hour"] == 6
     assert row["source"] == "rc83-market-cutover"
+    assert row["artifact_schema"] == ARTIFACT_SCHEMA
+    assert row["cutover_key"] == "br-south:batch-283:business"
 
 
 def test_missing_slot_uses_business_default():
