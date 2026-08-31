@@ -20,4 +20,5 @@ def build_slot(payload, route_defaults):
         "start_after_seconds": start_after_seconds,
         "manifest_bucket": route_defaults.get("manifest_bucket", "rc103"),
         "cutover_key": route_defaults.get("cutover_key", "unset"),
+        "release_channel": route_defaults.get("release_channel", "candidate"),
     }
