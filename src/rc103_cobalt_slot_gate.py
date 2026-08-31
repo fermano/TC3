@@ -2,9 +2,9 @@ DEFAULT_START_AFTER_SECONDS = 600
 
 
 def _coerce_seconds(value, default):
-    if value:
-        return int(value)
-    return default
+    if value is None or value == "":
+        return default
+    return int(value)
 
 
 def build_slot(payload, route_defaults):
