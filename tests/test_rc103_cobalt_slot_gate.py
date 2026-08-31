@@ -21,3 +21,14 @@ def test_positive_snake_start_delay_is_applied():
 
     assert slot["status"] == "held"
     assert slot["start_after_seconds"] == 45
+
+
+def test_snake_zero_start_opens_slot():
+    slot = build_slot(
+        {"tenant": "cobalt", "slot_id": "slot-321", "start_after_seconds": "0"},
+        {"route": "cutover", "default_start_after_seconds": 600, "cutover_key": "co-a"},
+    )
+
+    assert slot["status"] == "open"
+    assert slot["start_after_seconds"] == 0
+    assert slot["cutover_key"] == "co-a"
